@@ -20,7 +20,7 @@ public class SurveyResource {
     }
 
     // /surveys
-    // /surveys/ Survey1
+    // /surveys/Survey1
     // These are the good URIs.
 
     @RequestMapping("/surveys")
@@ -29,11 +29,28 @@ public class SurveyResource {
     }
 
     @RequestMapping("/surveys/{surveyId}")
-    public Survey retrieveAllSurveys(@PathVariable String surveyId) {
+    public Survey retrieveSurveyById(@PathVariable String surveyId) {
         Survey survey = surveyService.retrieveSurveyById(surveyId);
         if(survey == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return survey;
+    }
+    @RequestMapping("/surveys/{surveyId}/questions")
+    public List<Question> retrieveAllQuestionsBySurveyId(@PathVariable String surveyId){
+        List<Question> questionList = surveyService.retrieveAllQuestionsBySurveyId(surveyId);
+        if(questionList == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return questionList;
+    }
+
+    @RequestMapping("/surveys/{surveyId}/questions/{questionId}")
+    public Question retrieveSpecificQuestionBySurveyIdAndQuestionId(@PathVariable String surveyId, @PathVariable String questionId){
+        Question question = surveyService.retrieveSpecificQuestionBySurveyIdAndQuestionId(surveyId, questionId);
+        if(question == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return question;
     }
 }

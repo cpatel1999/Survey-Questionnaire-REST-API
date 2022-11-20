@@ -2,6 +2,7 @@ package com.application.springboot.restapi.survey;
 
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.Optional;
 public class SurveyService {
 
     private static List<Survey> surveys = new ArrayList<>();
-    static{
+
+    static {
         Question question1 = new Question("Question1",
                 "Most Popular Cloud Platform Today", Arrays.asList(
                 "AWS", "Azure", "Google Cloud", "Oracle Cloud"), "AWS");
@@ -37,10 +39,30 @@ public class SurveyService {
     }
 
     public Survey retrieveSurveyById(String id) {
-        Optional<Survey> optionalSurvey =  surveys.stream().filter(survey -> survey.getId().equalsIgnoreCase(id)).findFirst();
-        if(optionalSurvey.isEmpty()) {
+        Optional<Survey> optionalSurvey = surveys.stream().filter(survey -> survey.getId().equalsIgnoreCase(id)).findFirst();
+        if (optionalSurvey.isEmpty()) {
             return null;
         }
         return optionalSurvey.get();
+    }
+
+    public List<Question> retrieveAllQuestionsBySurveyId(String surveyId) {
+        Survey survey = retrieveSurveyById(surveyId);
+        if (survey == null) {
+            return null;
+        }
+        return survey.getQuestions();
+    }
+
+    public Question retrieveSpecificQuestionBySurveyIdAndQuestionId(String surveyId, String questionId) {
+        List<Question> surveyQuestions = retrieveAllQuestionsBySurveyId(surveyId);
+        if (surveyQuestions == null) {
+            return null;
+        }
+        Optional<Question> opetionalQuestion = surveyQuestions.stream().filter(question -> question.getId().equalsIgnoreCase(questionId)).findFirst();
+        if (opetionalQuestion.isEmpty()) {
+            return null;
+        }
+        return opetionalQuestion.get();
     }
 }
