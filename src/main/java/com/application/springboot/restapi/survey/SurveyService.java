@@ -3,6 +3,8 @@ package com.application.springboot.restapi.survey;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,5 +66,18 @@ public class SurveyService {
             return null;
         }
         return opetionalQuestion.get();
+    }
+
+    public String addNewSurveyQuestionBySurveyId(String surveyId, Question question) {
+        List<Question> questions = retrieveAllQuestionsBySurveyId(surveyId);
+        question.setId(generateRandomId());
+        questions.add(question);
+        return question.getId();
+    }
+
+    private static String generateRandomId() {
+        SecureRandom secureRandom = new SecureRandom();
+        String randomId = new BigInteger(32, secureRandom).toString();
+        return randomId;
     }
 }
