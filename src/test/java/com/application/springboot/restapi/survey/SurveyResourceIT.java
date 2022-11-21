@@ -116,11 +116,16 @@ public class SurveyResourceIT {
         HttpEntity<String> httpEntity = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<String> responseEntity = template.exchange(GENERIC_QUESTIONS_URL, HttpMethod.POST, httpEntity, String.class);
-        System.out.println(responseEntity.getHeaders());
 
         // Status of the response is 200.
         assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
 
-        assertTrue(responseEntity.getHeaders().get("location").get(0).contains("/surveys/Survey1/questions/"));
+        String locationHeader = responseEntity.getHeaders().get("location").get(0);
+        assertTrue(locationHeader.contains("/surveys/Survey1/questions/"));
+
+        //DELETE
+        //location header
+
+        template.delete(locationHeader);
     }
 }
