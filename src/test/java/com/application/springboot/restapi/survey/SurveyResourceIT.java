@@ -6,7 +6,11 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -81,5 +85,42 @@ public class SurveyResourceIT {
         assertEquals("application/json", responseEntity.getHeaders().get("Content-Type").get(0));
 
         JSONAssert.assertEquals(expectedResponse, responseEntity.getBody(), false);
+    }
+
+
+
+    @Test
+    public void addNewSurveyQuestionBySurveyId_basicScenario() {
+
+        String requestBody = """
+            {
+                "description": "Your Favourite Languages",
+                "options": [
+                    "Java",
+                    "Python",
+                    "Javascript",
+                    "Haskell"
+                ],
+                "correctAnswer": "Java"
+            }
+            """;
+
+            //    http://localhost:8080/surveys/Survey1/questions
+            //    POST
+            //    201
+            //    Location:	http://localhost:8080/surveys/Survey1/questions/1997597783
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> responseEntity = template.exchange(GENERIC_QUESTIONS_URL, HttpMethod.POST, httpEntity, String.class);
+        System.out.println(responseEntity.getHeaders());
+
+        // Status of the response is 200.
+        assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+
+        assertTrue(responseEntity.getHeaders().get("location").get(0).contains("/surveys/Survey1/questions/"));
     }
 }
