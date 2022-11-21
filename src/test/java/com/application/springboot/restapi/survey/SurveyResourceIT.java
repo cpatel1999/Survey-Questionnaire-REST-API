@@ -12,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Base64;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +23,9 @@ public class SurveyResourceIT {
 
     private static String SPECIFIC_QUESTION_URL = "/surveys/Survey1/questions/Question1";
     private static String GENERIC_QUESTIONS_URL = "/surveys/Survey1/questions";
+
+    //Authorization
+    //Basic Yzpw
 
     //Used so that application directly talks with https://localhost:RANDOM_PORT
     @Autowired
@@ -110,8 +115,7 @@ public class SurveyResourceIT {
             //    201
             //    Location:	http://localhost:8080/surveys/Survey1/questions/1997597783
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
+        HttpHeaders headers = createHttpContentTypeAndAuthorizationHeaders ();
 
         HttpEntity<String> httpEntity = new HttpEntity<>(requestBody, headers);
 
@@ -127,5 +131,23 @@ public class SurveyResourceIT {
         //location header
 
         template.delete(locationHeader);
+    }
+
+    private HttpHeaders createHttpContentTypeAndAuthorizationHeaders () {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", "Basic " + performBasicAuthEncoding("c", "p"));
+        return headers;
+    }
+
+    public String performBasicAuthEncoding(String user, String password) {
+        String combined = user + ":" + password;
+
+        //Base64 Encoding => Bytes
+        byte[] encodedBytes = Base64.getEncoder().encode(combined.getBytes());
+
+        //Bytes => String
+        return new String(encodedBytes);
+
     }
 }
