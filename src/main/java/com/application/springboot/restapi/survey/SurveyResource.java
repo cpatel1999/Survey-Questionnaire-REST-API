@@ -60,7 +60,8 @@ public class SurveyResource {
     public ResponseEntity<Object> addNewSurveyQuestionBySurveyId(@PathVariable String surveyId,
                                                                  @RequestBody Question question) {
         String questionId = surveyService.addNewSurveyQuestionBySurveyId(surveyId, question);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{questionId}").buildAndExpand(questionId).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().
+                path("/{questionId}").buildAndExpand(questionId).toUri();
         return ResponseEntity.created(location).build();
     }
 
